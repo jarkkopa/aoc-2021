@@ -16,36 +16,36 @@ let depthTrend x =
 
 let rec solve list r =
     match list with
-    | [_] -> r
-    | head::tail ->
+    | [ _ ] -> r
+    | head :: tail ->
         let next = (head, List.head tail) |> depthTrend
-        let newR = r @ [next]
+        let newR = r @ [ next ]
         solve tail newR
     | _ -> r
 
 let howManyIncreases input =
     let filterIncreased = List.filter (fun x -> x = "increased")
 
-    (input, []) 
-    ||> solve 
+    (input, [])
+    ||> solve
     |> filterIncreased
     |> List.length
 
 let rec sumRollingThree list r =
     match list with
-    | [ _ ; _] -> r
-    | head::tail -> 
-        let newR = r @ [head :: List.take 2 tail |> List.sum]
+    | [ _; _ ] -> r
+    | head :: tail ->
+        let newR =
+            r @ [ head :: List.take 2 tail |> List.sum ]
+
         sumRollingThree tail newR
     | _ -> r
 
-let day1part1 () =
-    readInput()
-    |> howManyIncreases
+let day1part1 () = readInput () |> howManyIncreases
 
 let day1part2 () =
-    let input = readInput()
+    let input = readInput ()
 
     (input, [])
-    ||> sumRollingThree 
+    ||> sumRollingThree
     |> howManyIncreases

@@ -14,20 +14,20 @@ let depthTrend x =
     | (a, b) when a = b -> "no change"
     | _ -> "N/A"
 
-let rec solve list r =
+let rec solveDepthTrends list r =
     match list with
     | [ _ ] -> r
     | head :: tail ->
         let next = (head, List.head tail) |> depthTrend
         let newR = r @ [ next ]
-        solve tail newR
+        solveDepthTrends tail newR
     | _ -> r
 
 let howManyIncreases input =
     let filterIncreased = List.filter (fun x -> x = "increased")
 
     (input, [])
-    ||> solve
+    ||> solveDepthTrends
     |> filterIncreased
     |> List.length
 
@@ -35,13 +35,13 @@ let rec sumRollingThree list r =
     match list with
     | [ _; _ ] -> r
     | head :: tail ->
-        let newR =
-            r @ [ head :: List.take 2 tail |> List.sum ]
-
+        let newR = r @ [ head :: List.take 2 tail |> List.sum ]
         sumRollingThree tail newR
     | _ -> r
 
-let day1part1 () = readInput () |> howManyIncreases
+let day1part1 () = 
+    readInput ()
+    |> howManyIncreases
 
 let day1part2 () =
     let input = readInput ()

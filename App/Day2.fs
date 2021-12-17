@@ -8,35 +8,23 @@ let readInput =
     |> Array.map (fun a -> a.[0], a.[1] |> int)
     |> Array.toList
 
-let rec mov (h, v) dir =
+let withPos (h, v, _) dir =
     match dir with
-    |   head::tail ->
-        match head with
-        | ("forward", b) -> mov (h + b,v) tail
-        | ("up", b) -> mov (h, v - b) tail
-        | ("down", b) -> mov (h, v + b) tail
-        | _ -> failwith "Invalid direction"
-    | [] -> (h,v)
+    | ("forward", b) -> (h + b, v, 0)
+    | ("up", b) -> (h, v - b, 0)
+    | ("down", b) -> (h, v + b, 0)
+    | _ -> failwith "Invalid direction"
 
-let day2part1 =
-    readInput
-    |> mov (0,0)
-    ||> (fun a b -> a * b)
-
-let rec movWithAim (h, v, a) dir =
+let withAim (h, v, a) dir =
     match dir with
-    |   head::tail ->
-        match head with
-        | ("forward", b) ->
-            movWithAim (h + b, v + a * b, a) tail
-        | ("up", b) ->
-            movWithAim (h, v, a - b) tail
-        | ("down", b) ->
-            movWithAim (h, v, a + b) tail
-        | _ -> failwith "Invalid direction"
+    | ("forward", b) -> (h + b, v + a * b, a)
+    | ("up", b) -> (h, v, a - b)
+    | ("down", b) -> (h, v, a + b)
+    | _ -> failwith "Invalid direction"
+
+let rec movWith mode (h, v, a) dir =
+    match dir with
+    | head::tail -> movWith mode (mode(h,v,a) head) tail
     | [] -> (h, v, a)
 
-let day2part2 =
-    readInput
-    |> movWithAim (0, 0, 0)
-    |||> (fun h v _ -> h * v)
+let day2 mode = readInput |> movWith mode (0, 0, 0) |||> (fun h v _ -> h * v)

@@ -8,19 +8,35 @@ let readInput =
     |> Array.map (fun a -> a.[0], a.[1] |> int)
     |> Array.toList
 
-let rec mov (h,v) dir =
+let rec mov (h, v) dir =
     match dir with
     |   head::tail ->
         match head with
         | ("forward", b) -> mov (h + b,v) tail
         | ("up", b) -> mov (h, v - b) tail
         | ("down", b) -> mov (h, v + b) tail
-        | a -> failwith "Invalid direction"
+        | _ -> failwith "Invalid direction"
     | [] -> (h,v)
 
 let day2part1 =
     readInput
-    |> List.groupBy fst
-    |> List.map (fun x -> fst x, x |> snd |> List.sumBy snd)
     |> mov (0,0)
-    ||> (fun a b -> a*b)
+    ||> (fun a b -> a * b)
+
+let rec movWithAim (h, v, a) dir =
+    match dir with
+    |   head::tail ->
+        match head with
+        | ("forward", b) ->
+            movWithAim (h + b, v + a * b, a) tail
+        | ("up", b) ->
+            movWithAim (h, v, a - b) tail
+        | ("down", b) ->
+            movWithAim (h, v, a + b) tail
+        | _ -> failwith "Invalid direction"
+    | [] -> (h, v, a)
+
+let day2part2 =
+    readInput
+    |> movWithAim (0, 0, 0)
+    |||> (fun h v _ -> h * v)
